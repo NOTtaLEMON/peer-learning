@@ -208,7 +208,7 @@ async function handleQuiz() {
 
 // --- Navigation ---
 function goBackToMain() {
-  window.location.href = 'test1.html';
+  window.location.href = 'index.html';
 }
 
 // Initialize auth state (keeps parity with match.js)
@@ -226,13 +226,13 @@ function logout() {
   if (window.firebaseAuthSignOut) {
     window.firebaseAuthSignOut().then(() => {
       localStorage.removeItem('currentUser');
-      window.location.href = 'test1.html';
+      window.location.href = 'index.html';
     }).catch(() => {
       localStorage.removeItem('currentUser');
-      window.location.href = 'test1.html';
+      window.location.href = 'index.html';
     });
     return;
   }
   localStorage.removeItem('currentUser');
-  window.location.href = 'test1.html';
+  window.location.href = 'index.html';
 }
