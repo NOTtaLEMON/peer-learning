@@ -1,0 +1,25 @@
+# 🔒 Sensitive config files
+.env
+firebase-config.js
+
+# 🧪 Logs and debug files
+*.log
+
+# 🧰 OS-specific junk
+.DS_Store
+Thumbs.db
+
+# 🧠 Editor settings
+.vscode/
+.idea/
+
+# 🏗️ Build folders (if you use bundlers later)
+dist/
+build/
+
+# 📦 Node modules (if you use npm later)
+node_modules/
+
+# 🔄 Cache and temp files
+*.tmp
+.cache/
