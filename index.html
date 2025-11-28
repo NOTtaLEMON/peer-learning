@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PeerFuse | Complementary Peer Matching</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>PeerFuse</h1>
+    <p>Match with peers who complement your learning strengths and weaknesses.</p>
+    <div class="user-bar" id="user-bar">
+      <span id="user-welcome">Not signed in</span>
+      <button id="logout-btn" class="hidden" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- AUTH / LOGIN SCREEN -->
+  <div class="auth-screen" id="auth-screen">
+    <div class="auth-card">
+      <h2>Welcome to PeerFuse</h2>
+      <p class="status">Sign in or create an account. Accounts are stored in Firebase Auth (email/password).</p>
+      <form id="auth-form" onsubmit="return false">
+        <div class="auth-field-group">
+          <label for="auth-email">Email</label>
+          <input type="email" id="auth-email" placeholder="you@school.edu" />
+          <label for="auth-password" class="label-tight">Password</label>
+          <input type="password" id="auth-password" placeholder="choose a password" />
+
+          <div id="auth-username-row" class="hidden">
+            <label for="auth-username">Choose a display name</label>
+            <input type="text" id="auth-username" placeholder="e.g., raghav" />
+          </div>
+        </div>
+        <div class="auth-actions">
+          <button type="button" id="signup-btn" onclick="signup(); return false;">Sign Up</button>
+          <button type="button" id="set-username-btn" class="hidden" onclick="completeSignup(); return false;">Set Display Name</button>
+          <button type="button" id="login-btn" onclick="login(); return false;">Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <main>
+    <!-- Main is hidden until user logs in by JS if not authenticated -->
+    <!-- SECTION 1: PROFILE SETUP (hidden) -->
+    <section class="card hidden" id="profile-section">
+      <h2>Create Your Learning Profile</h2>
+      <form id="profile-form" onsubmit="return false">
+        <div class="two-col">
+          <div>
+            <label for="profile-username">Username / Name</label>
+            <input type="text" id="profile-username" required />
+          </div>
+          <div>
+            <label for="profile-password">Password</label>
+            <input type="password" id="profile-password" required />
+          </div>
+        </div>
+
+        <button type="button" id="save-profile-btn">Save Profile</button>
+        <p class="status" id="profile-status"></p>
+      </form>
+    </section>
+
+    <!-- SECTION 2: PRE SESSION QUIZ -->
+    <section class="card" id="prequiz-section">
+      <h2>Pre-Session Quiz</h2>
+      <p>Rate your current understanding in each topic from 1 (very weak) to 5 (very strong).</p>
+
+      <form id="prequiz-form">
+        <div id="prequiz-topics">
+          <!-- Topics generated from profile (topicsGood + topicsBad) -->
+        </div>
+        <button type="submit">Submit Pre-Quiz</button>
+        <p class="status" id="prequiz-status"></p>
+      </form>
+    </section>
+
+    <!-- SECTION 3: MATCHING -->
+    <section class="card" id="match-section">
+      <h2>Find a Complementary Peer</h2>
+      <p>We’ll match you with someone whose strengths align with your weaker areas and vice-versa.</p>
+
+      <!-- Expanded matching form (fields used by match.js) -->
+      <form id="simpleMatchForm" onsubmit="return false">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Your display name"><br><br>
+
+        <div class="two-col">
+          <div>
+            <label for="strength1">Strength 1</label>
+            <input type="text" id="strength1" placeholder="e.g., Calculus">
+            <label for="strength2">Strength 2</label>
+            <input type="text" id="strength2" placeholder="e.g., Python">
+          </div>
+          <div>
+            <label for="weakness1">Weakness 1</label>
+            <input type="text" id="weakness1" placeholder="e.g., Limits">
+            <label for="weakness2">Weakness 2</label>
+            <input type="text" id="weakness2" placeholder="e.g., Data Structures">
+          </div>
+        </div>
+
+        <label for="primaryGoal">Primary Goal</label>
+        <select id="primaryGoal">
+          <option>Clear basics</option>
+          <option>Improve internals</option>
+          <option>Prepare for semester end exams</option>
+          <option>Other</option>
+        </select>
+
+        <label for="preferredFrequency">Preferred Frequency</label>
+        <select id="preferredFrequency">
+          <option>Once a week</option>
+          <option>2-3 times a week</option>
+          <option>Monthly once</option>
+        </select>
+
+        <label for="partnerPreference">Preferred Partner</label>
+        <select id="partnerPreference">
+          <option>Stronger</option>
+          <option>Similar level</option>
+          <option>No Preference</option>
+        </select>
+
+        <label for="availability">What time are you available?</label>
+        <select id="availability">
+          <option>6AM-10AM</option>
+          <option>10AM-2PM</option>
+          <option>2PM-6PM</option>
+          <option>6PM-10PM</option>
+        </select>
+
+        <label for="sessionLength">Session Length Preference</label>
+        <select id="sessionLength">
+          <option>30 mins</option>
+          <option>2 hours</option>
+        </select>
+
+        <label for="timeZone">Time Zone</label>
+        <select id="timeZone">
+          <option>UTC-12:00</option>
+          <option>UTC-11:00</option>
+          <option>UTC-10:00</option>
+          <option>UTC-09:30</option>
+          <option>UTC-09:00</option>
+          <option>UTC-08:00</option>
+          <option>UTC-07:00</option>
+          <option>UTC-06:00</option>
+          <option>UTC-05:00</option>
+          <option>UTC-04:30</option>
+          <option>UTC-04:00</option>
+          <option>UTC-03:30</option>
+          <option>UTC-03:00</option>
+          <option>UTC-02:00</option>
+          <option>UTC-01:00</option>
+          <option selected>UTC+00:00</option>
+          <option>UTC+01:00</option>
+          <option>UTC+02:00</option>
+          <option>UTC+03:00</option>
+          <option>UTC+03:30</option>
+          <option>UTC+04:00</option>
+          <option>UTC+04:30</option>
+          <option>UTC+05:00</option>
+          <option>UTC+05:30</option>
+          <option>UTC+05:45</option>
+          <option>UTC+06:00</option>
+          <option>UTC+06:30</option>
+          <option>UTC+07:00</option>
+          <option>UTC+08:00</option>
+          <option>UTC+08:30</option>
+          <option>UTC+08:45</option>
+          <option>UTC+09:00</option>
+          <option>UTC+09:30</option>
+          <option>UTC+10:00</option>
+          <option>UTC+10:30</option>
+          <option>UTC+11:00</option>
+          <option>UTC+12:00</option>
+          <option>UTC+12:45</option>
+          <option>UTC+13:00</option>
+          <option>UTC+14:00</option>
+        </select><br><br>
+
+        <label for="studyPersonality">Study Personality</label>
+        <select id="studyPersonality">
+          <option>Highly structured</option>
+          <option>Moderate planning</option>
+          <option>Very casual</option>
+        </select>
+
+        <label for="mode">Preferred Mode</label>
+        <select id="mode">
+          <option>Chat</option>
+          <option>Online Meeting</option>
+        </select>
+
+        <div class="match-form-actions">
+          <button type="button" onclick="addUser()">Add User</button>
+          <button type="button" onclick="findMatch()">Find Match</button>
+        </div>
+      </form>
+
+      <h2 id="result"></h2>
+    </section>
+
+    <!-- SECTION 4: SESSION + MEET LINK -->
+    <section class="card" id="session-section">
+      <h2>Session Details & Google Meet Link</h2>
+      <p>Connect on video, teach each other, and discuss the topics you selected.</p>
+      <div id="session-info">
+        <p>No session generated yet.</p>
+      </div>
+    </section>
+
+    <!-- SECTION 5: POST SESSION QUIZ + FEEDBACK -->
+    <section class="card" id="postquiz-section">
+      <h2>Post-Session Quiz & Peer Feedback</h2>
+      <form id="postquiz-form">
+        <h3>Post-Session Quiz</h3>
+        <p>Rate your understanding of the same topics after the session.</p>
+        <div id="postquiz-topics">
+          <!-- Generated same as pre-quiz -->
+        </div>
+
+        <h3>Feedback on Your Peer</h3>
+        <label for="peer-rating">How helpful was your peer? (1–5)</label>
+        <input type="number" id="peer-rating" min="1" max="5" required />
+
+        <label for="peer-feedback">Feedback Comments</label>
+        <textarea id="peer-feedback" placeholder="What did you like? What can improve?" required></textarea>
+
+        <button type="submit">Submit Post-Quiz & Feedback</button>
+        <p class="status" id="postquiz-status"></p>
+      </form>
+    </section>
+
+    <!-- SECTION 6: AI LEARNING TOOLS & NOTES -->
+    <section class="card" id="ai-section">
+      <h2>AI-Assisted Learning Tools & Notes</h2>
+      <p>Based on your weaker topics, PeerFuse suggests focused study tips powered by Google Gemini AI.</p>
+      <button onclick="window.location.href='ai-tools.html'">Open AI Learning Tools</button>
+      <small class="note">
+        (Generate personalized notes, flashcards, quizzes, and match explanations using AI.)
+      </small>
+    </section>
+  </main>
+
+  <footer>
+    <p>PeerFuse • Built with HTML, CSS, JavaScript, Firebase • Designed for quantitative + qualitative analysis of peer learning.</p>
+  </footer>
+
+  <!-- Firebase SDKs – paste the scripts & config from your Firebase console here -->
+  <!-- Example (keep your own versions + keys):
+  <script type="module">
+    // Firebase imports & config will be handled in app.js instead.
+  </script>
+  -->
+
+  <!-- Script that powers the simple matching demo in this folder -->
+  <!-- Firebase SDKs (compat) and init; then matching logic -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-init.js"></script>
+  <script src="match.js"></script>
+</body>
+</html>
+
