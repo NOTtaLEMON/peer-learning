@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PeerFuse | AI Learning Tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Gemini SDK
+    NOTE: the prebuilt package from some CDNs may be a Node/CommonJS bundle and can
+    cause runtime errors like "exports is not defined" in the browser. To avoid that,
+    either include an official browser-compatible SDK build or use a backend proxy.
+    This app works without the client-side SDK — you can set `window.GEMINI_API_KEY`
+    and the code will attempt to initialize if a compatible SDK is present.
+  -->
+
+  <style>
+    .ai-tools-container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .tool-section {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 18px rgba(11,15,25,0.06);
+      border-left: 6px solid var(--matcha);
+    }
+
+    .tool-section h3 {
+      color: var(--matcha-dark);
+      margin-top: 0;
+    }
+
+    .ai-box {
+      border: 1px solid rgba(138,174,63,0.2);
+      padding: 14px;
+      margin-top: 10px;
+      white-space: pre-line;
+      background: rgba(138,174,63,0.04);
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+
+    .ai-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .ai-input-group input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid rgba(15,23,42,0.08);
+      border-radius: 8px;
+    }
+
+    .loading {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .back-btn {
+      background: var(--matcha);
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .back-btn:hover {
+      background: var(--matcha-dark);
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>PeerFuse | AI Learning Tools</h1>
+    <p>Generate personalized study materials powered by Google Gemini AI</p>
+    <div class="user-bar" id="user-bar">
+      <span id="user-welcome">Not signed in</span>
+      <button id="logout-btn" class="hidden" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="ai-tools-container">
+    <button class="back-btn" onclick="goBackToMain()">← Back to Main</button>
+
+    <!-- BEFORE SESSION: Match Explanation -->
+    <div class="tool-section">
+      <h3>📚 Before Session: Match Explanation</h3>
+      <p>See why you and your peer are a great match based on complementary strengths and weaknesses.</p>
+      <button onclick="handleMatchExplanation()">Generate Match Explanation</button>
+      <div id="match-explanation" class="ai-box"></div>
+    </div>
+
+    <!-- AFTER SESSION: Study Materials -->
+    <div class="tool-section">
+      <h3>✏️ After Session: Generate Study Materials</h3>
+      <p>Enter a topic you covered in the session to generate notes, flashcards, and practice quizzes.</p>
+      <div class="ai-input-group">
+        <input type="text" id="topicInput" placeholder="e.g., Integration, OOP, Thermodynamics" />
+        <button onclick="handleNotes()">Notes</button>
+        <button onclick="handleFlashcards()">Flashcards</button>
+        <button onclick="handleQuiz()">Quiz</button>
+      </div>
+
+      <h4>📝 Notes</h4>
+      <div id="notes-box" class="ai-box"></div>
+
+      <h4>🎴 Flashcards</h4>
+      <div id="flashcards-box" class="ai-box"></div>
+
+      <h4>❓ Quiz (Easy → Medium → Hard)</h4>
+      <div id="quiz-box" class="ai-box"></div>
+    </div>
+  </div>
+
+  <!-- Your AI JS file -->
+  <script src="ai-tools.js"></script>
+</body>
+</html>
